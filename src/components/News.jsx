@@ -68,7 +68,7 @@ export default class News extends Component {
         <div className="row my-5">
           {this.state.articles &&
             this.state.articles.length > 0 &&
-            this.state.articles.map((element) => (
+            !this.state.loading && this.state.articles.map((element) => (
               <div className="col-md-4" key={element.url}>
                 <NewsItem
                   title={
