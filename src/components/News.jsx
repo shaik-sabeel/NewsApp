@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import NewsItem from "./NewsItem";
+import Loader from "./Loader";
+
 
 export default class News extends Component {
   constructor() {
@@ -14,28 +16,28 @@ export default class News extends Component {
 
   componentDidMount = async () => {
     let url =
-      `https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=94cb54ecc0db4bb88a7c0d110e8ca65f&page=${this.state.page + 1}&pageSize=20`;
-    let data = await fetch(url);
+      `https://newsapi.org/v2/everything?q=apple&from=2025-07-19&to=2025-07-19&sortBy=popularity&apiKey=94cb54ecc0db4bb88a7c0d110e8ca65f&page=1&pageSize=${this.props.pageSize}`;
+    this.setState({ loading: true });
+     let data = await fetch(url);
     let parsedData = await data.json();
     console.log(parsedData);
     this.setState({
       articles: parsedData.articles,
       totalResults: parsedData.totalResults,
+      loading: false,
     });
   };
 
   handleNextClick = async () => {
 
-    if(this.state.page + 1 > Math.ceil(this.state.totalResults / 20)){
+    if(!(this.state.page + 1 > Math.ceil(this.state.totalResults / 20))){
 
-    }
-    else{
- 
     let url =
-      `https://newsapi.org/v2/everything?q=apple&from=2025-07-19&to=2025-07-19&sortBy=popularity&apiKey=94cb54ecc0db4bb88a7c0d110e8ca65f&page=${this.state.page + 1}&pageSize=20`;
-    let data = await fetch(url);
+      `https://newsapi.org/v2/everything?q=apple&from=2025-07-19&to=2025-07-19&sortBy=popularity&apiKey=94cb54ecc0db4bb88a7c0d110e8ca65f&page=${this.state.page + 1}&pageSize=${this.props.pageSize}`;
+    this.setState({ loading: true });
+      let data = await fetch(url);
     let parsedData = await data.json();
-    console.log(parsedData);
+    this.setState({ loading: false });
     this.setState({
       page: this.state.page + 1,
       articles: parsedData.articles,
@@ -46,10 +48,11 @@ export default class News extends Component {
   handlePreviousClick = async () => {
     console.log("Previous");
     let url =
-      `https://newsapi.org/v2/everything?q=apple&from=2025-07-19&to=2025-07-19&sortBy=popularity&apiKey=94cb54ecc0db4bb88a7c0d110e8ca65f&page=${this.state.page -1}&pageSize=20`;
-    let data = await fetch(url);
+      `https://newsapi.org/v2/everything?q=apple&from=2025-07-19&to=2025-07-19&sortBy=popularity&apiKey=94cb54ecc0db4bb88a7c0d110e8ca65f&page=${this.state.page -1}&pageSize=${this.props.pageSize}`;
+    this.setState({ loading: true });
+      let data = await fetch(url);
     let parsedData = await data.json();
-    console.log(parsedData);
+    this.setState({ loading: false });
     this.setState({
       page: this.state.page - 1,
       articles: parsedData.articles,
@@ -59,7 +62,9 @@ export default class News extends Component {
   render() {
     return (
       <div className="container my-3">
-        <h1>NewsMonkey - Top Headlines</h1>
+
+        <h1 className="text-center">NewsMonkey - Top Headlines</h1>
+        {this.state.loading && <Loader />}
         <div className="row my-5">
           {this.state.articles &&
             this.state.articles.length > 0 &&
